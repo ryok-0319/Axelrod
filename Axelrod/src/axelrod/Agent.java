@@ -6,7 +6,7 @@ public class Agent {
 
 	int num;
 
-	static int scores[] = new int[20];
+	int score;
 
 	static int T = 3;
 	static int H = -1;
@@ -34,7 +34,7 @@ public class Agent {
 	}
 
 	// 裏切りか協力かを決定
-	void makeStrategy(double s) {
+	void makeStrategy(double s, Agent agents[]) {
 		// 協力
 		if(s > this.B_i) {
 			this.strategy = 1;
@@ -44,17 +44,17 @@ public class Agent {
 		else {
 			this.strategy = 0;
 			this.getBenefit(T);
-			this.giveBenefitToOthers(H);
+			this.giveBenefitToOthers(H, agents);
 		}
 	}
 
 	// 裏切り者への懲罰
-	void punishTraitor(int agent_num, double s) {
+	void punishTraitor(int agent_num, double s, Agent agents[]) {
 		// 協力（懲罰）する
 		if (s > this.V_j) {
 			this.strategy = 1;
 			this.getBenefit(E);
-			this.giveBenefitToTraitor(P, agent_num);
+			this.giveBenefitToTraitor(P, agent_num, agents);
 		}
 		// 裏切る（見逃す）
 		else {
@@ -63,12 +63,12 @@ public class Agent {
 		}
 	}
 	// 裏切り者を無視したものへの懲罰
-	void punishIgnorer(int agent_num, double s) {
+	void punishIgnorer(int agent_num, double s, Agent agents[]) {
 		// 協力（懲罰）する
 		if (s > this.V_k) {
 			this.strategy = 1;
 			this.getBenefit(E_d);
-			this.giveBenefitToTraitor(P_d, agent_num);
+			this.giveBenefitToTraitor(P_d, agent_num, agents);
 		}
 		// 裏切る（見逃す）
 		else {
@@ -92,20 +92,20 @@ public class Agent {
 
 	// 報酬を得る（またはコストを払う）
 	void getBenefit(int benefit) {
-		scores[this.num] += benefit;
+		this.score += benefit;
 	}
 
 	// 自分以外のエージェントに報酬を与える
-	void giveBenefitToOthers(int benefit) {
+	void giveBenefitToOthers(int benefit, Agent agents[]) {
 		// 自分から一旦引き算をしておく
-		scores[this.num] -= benefit;
-		for(int i = 0; i < scores.length; i++) {
-			scores[i] += benefit;
+		this.score -= benefit;
+		for(int i = 0; i < agents.length; i++) {
+			agents[i].score += benefit;
 		}
 	}
 
 	// 非協力者を攻撃
-	void giveBenefitToTraitor(int benefit, int traitor_num) {
-		scores[traitor_num] += benefit;
+	void giveBenefitToTraitor(int benefit, int traitor_num, Agent agents[]) {
+		agents[traitor_num].score += benefit;
 	}
 }
