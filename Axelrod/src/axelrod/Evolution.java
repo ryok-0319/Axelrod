@@ -6,6 +6,7 @@ public class Evolution {
 		for(int i = 0; i < 5; i++) {
 			agents[i+15].B = agents[i].B;
 			agents[i+15].V = agents[i].V;
+			agents[i+15].L = agents[i].L;
 		}
 		// 突然変異
 		for(int i = 0; i < agents.length; i++) {
@@ -14,6 +15,9 @@ public class Evolution {
 			}
 			if(Math.random() < 0.06) {
 				agents[i].V = Math.random();
+			}
+			if(Math.random() < 0.06) {
+				agents[i].L = Math.random();
 			}
 		}
 	}

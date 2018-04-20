@@ -8,21 +8,33 @@ public class Agent {
 
 	int score;
 
-	static int T = 3;
-	static int H = -1;
-	static int E = -2;
-	static int P = -9;
-	static int E_d = -2;
-	static int P_d = -9;
+	static int T = 0;
+	static int H = 0;
+	static int F = -3;
+	static int M = 1;
+	static int E = 0;
+	static int P = 0;
+	static int C = -2;
+	static int R = 9;
+	static int E_d = 0;
+	static int P_d = 0;
+	static int C_d = 0;
+	static int R_d = 0;
+	static int E_dd = 0;
+	static int P_dd = 0;
+	static int C_dd = -2;
+	static int R_dd = 9;
 
 	// 大胆さ
 	double B = Math.random();
 	// 裏切り者への懲罰率
 	double V = Math.random();
+	// 協調者に報酬を与える確率
+	double L = Math.random();
 
 	// コンストラクタ
 	Agent() {
-		// 初期値は、協力(1)か、裏切り(0)を1/2で選択
+		// 協力(1)、裏切り(0)だが、とりあえず2にセット
 		this.strategy = 2;
 	}
 
@@ -34,9 +46,10 @@ public class Agent {
 	// 裏切りか協力かを決定
 	void makeStrategy(double s, Agent agents[]) {
 		// 協力
-		if(s > this.B) {
+		if(s < this.B) {
 			this.strategy = 1;
-			// 協力の場合は何も発生しない
+			this.getBenefit(F);
+			this.giveBenefitToOthers(M, agents);
 		}
 		// 裏切り
 		else {
@@ -47,12 +60,12 @@ public class Agent {
 	}
 
 	// 裏切り者への懲罰
-	void punishTraitor(int agent_num, Agent agents[]) {
+	void punishTraitor(int target_num, int cost, int punishment, Agent agents[]) {
 		// 協力（懲罰）する
 		if (this.V > Math.random()) {
 			this.strategy = 1;
-			this.getBenefit(E);
-			this.giveBenefitToTraitor(P, agent_num, agents);
+			this.getBenefit(cost);
+			this.giveBenefitToSomeone(punishment, target_num, agents);
 		}
 		// 裏切る（見逃す）
 		else {
@@ -60,18 +73,18 @@ public class Agent {
 			// 見逃した場合は何も発生しない
 		}
 	}
-	// 裏切り者を無視したものへの懲罰
-	void punishIgnorer(int agent_num, Agent agents[]) {
-		// 協力（懲罰）する
-		if (this.V > Math.random()) {
+
+	void rewardCooperator(int target_num, int cost, int reward, Agent agents[]) {
+		// 協力する（報酬を与える）
+		if(this.L > Math.random()) {
 			this.strategy = 1;
-			this.getBenefit(E_d);
-			this.giveBenefitToTraitor(P_d, agent_num, agents);
+			this.getBenefit(cost);
+			this.giveBenefitToSomeone(reward, target_num, agents);
 		}
-		// 裏切る（見逃す）
+		// 裏切る（報酬を与えない）
 		else {
 			this.strategy = 0;
-			// 見逃した場合は何も発生しない
+			// 何も発生しない
 		}
 	}
 
@@ -89,8 +102,8 @@ public class Agent {
 		}
 	}
 
-	// 非協力者を攻撃
-	void giveBenefitToTraitor(int benefit, int traitor_num, Agent agents[]) {
+	// 特定のエージェント一人に報酬または懲罰を与える
+	void giveBenefitToSomeone(int benefit, int traitor_num, Agent agents[]) {
 		agents[traitor_num].score += benefit;
 	}
 }
