@@ -15,12 +15,10 @@ public class Agent {
 	static int E_d = -2;
 	static int P_d = -9;
 
-	// 協調率
-	double B_i = Math.random();
+	// 大胆さ
+	double B = Math.random();
 	// 裏切り者への懲罰率
-	double V_j = Math.random();
-	// 裏切りを見逃した者への懲罰率
-	double V_k = Math.random();
+	double V = Math.random();
 
 	// コンストラクタ
 	Agent() {
@@ -36,7 +34,7 @@ public class Agent {
 	// 裏切りか協力かを決定
 	void makeStrategy(double s, Agent agents[]) {
 		// 協力
-		if(s > this.B_i) {
+		if(s > this.B) {
 			this.strategy = 1;
 			// 協力の場合は何も発生しない
 		}
@@ -49,9 +47,9 @@ public class Agent {
 	}
 
 	// 裏切り者への懲罰
-	void punishTraitor(int agent_num, double s, Agent agents[]) {
+	void punishTraitor(int agent_num, Agent agents[]) {
 		// 協力（懲罰）する
-		if (s > this.V_j) {
+		if (this.V > Math.random()) {
 			this.strategy = 1;
 			this.getBenefit(E);
 			this.giveBenefitToTraitor(P, agent_num, agents);
@@ -63,9 +61,9 @@ public class Agent {
 		}
 	}
 	// 裏切り者を無視したものへの懲罰
-	void punishIgnorer(int agent_num, double s, Agent agents[]) {
+	void punishIgnorer(int agent_num, Agent agents[]) {
 		// 協力（懲罰）する
-		if (s > this.V_k) {
+		if (this.V > Math.random()) {
 			this.strategy = 1;
 			this.getBenefit(E_d);
 			this.giveBenefitToTraitor(P_d, agent_num, agents);
@@ -74,19 +72,6 @@ public class Agent {
 		else {
 			this.strategy = 0;
 			// 見逃した場合は何も発生しない
-		}
-	}
-
-	void evolution(int B_i, int V_j) {
-		// 突然変異
-		if (Math.random() < 0.06) {
-			this.B_i = Math.random();
-			this.V_j = Math.random();
-		}
-		// 通常の進化
-		else {
-			this.B_i = B_i;
-			this.V_j = V_j;
 		}
 	}
 
